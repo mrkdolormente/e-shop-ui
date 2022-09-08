@@ -69,7 +69,7 @@ export class CartComponent implements OnInit {
   get subTotal(): number {
     return this.cartItems
       .filter((t) => t.isChecked)
-      .map((items) => items.product.price || 0)
+      .map((item) => (item.product.price || 0) * item.quantity)
       .reduce((previousValue, currentValue) => previousValue + currentValue, 0);
   }
 
@@ -89,5 +89,23 @@ export class CartComponent implements OnInit {
     this.allChecked = isChecked;
 
     this.cartItems.forEach((t) => (t.isChecked = isChecked));
+  }
+
+  increaseQuantity(id: number) {
+    this.cartItems = this.cartItems.map((cartItem) => {
+      return {
+        ...cartItem,
+        quantity: cartItem.id == id ? (cartItem.quantity += 1) : cartItem.quantity,
+      };
+    });
+  }
+
+  decreaseQuantity(id: number) {
+    this.cartItems = this.cartItems.map((cartItem) => {
+      return {
+        ...cartItem,
+        quantity: cartItem.id == id ? (cartItem.quantity -= 1) : cartItem.quantity,
+      };
+    });
   }
 }
