@@ -6,10 +6,9 @@ import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SharedModule } from './shared/shared.module';
 import { FormsModule } from '@angular/forms';
-import { ProductsInfoComponent } from './products/products-info/products-info.component';
 
 @NgModule({
-  declarations: [AppComponent, ProductsInfoComponent],
+  declarations: [AppComponent],
   imports: [
     AppRoutingModule,
     BrowserModule,

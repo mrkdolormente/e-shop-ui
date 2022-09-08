@@ -1,0 +1,31 @@
+<section class=" es-py-8 es-px-6">
+    <button mat-flat-button class="es-bg-gray-100" routerLink="/">
+        <mat-icon>keyboard_arrow_left</mat-icon> Go back to products
+    </button>
+    <div class="es-flex es-flex-col lg:es-flex-row es-gap-2 es-pt-4">
+        <div class="lg:es-w-1/4">
+            <img [src]="productInfo.img" [alt]="productInfo.name" class="es-w-full es-h-96 es-object-contain"/>
+        </div>
+        <div class="lg:es-w-1/2 es-flex es-flex-col es-p-4 es-bg-gray-100 es-justify-between">
+            <div>
+                <h1>{{ productInfo.name }}</h1>
+                <p>{{ productInfo.description }}</p>
+                <div>Brand: <b>{{ productInfo.brand }}</b></div>
+                <div>Category: <b>{{ productInfo.category.name }}</b></div>
+            </div>
+            <div class="es-text-2xl es-py-4 es-border-y es-border-solid es-text-purple-800">
+                ₱{{ productInfo.price | number: '.2' }}
+            </div>
+            <div class="es-inline-flex es-gap-2 es-py-4">
+                <button mat-raised-button color="accent" class="es-ml-4" (click)="addToCart()"><mat-icon>add_shopping_cart</mat-icon>Add to Cart</button>
+                <button mat-raised-button color="primary">Buy Now</button>
+            </div>
+        </div>
+        <div class="lg:es-w-1/4">
+            <button  class="es-flex es-items-center es-bg-gray-100 es-w-full" [routerLink]="['/seller', productInfo.seller.id]">
+                <mat-icon class="seller-icon es-text-gray-400">account_box</mat-icon>
+                <div class=" es-text-base">{{ productInfo.seller.name }}</div>
+            </button>
+        </div>
+    </div>
+</section>

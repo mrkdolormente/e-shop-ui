@@ -5,9 +5,9 @@
     <span>E-Shop</span>
     <span class="es-flex-auto"></span>
     <button mat-icon-button aria-label="Example icon-button with heart icon">
-        <mat-icon matBadge="8" matBadgePosition="after" matBadgeColor="accent">shopping_cart</mat-icon>
+        <mat-icon [matBadge]="cartService.itemCount" matBadgePosition="after" matBadgeColor="accent">shopping_cart</mat-icon>
     </button>
     <button mat-icon-button class="example-icon" aria-label="Example icon-button with share icon">
-        <mat-icon>person</mat-icon>
+        <mat-icon>account_circle</mat-icon>
     </button>
 </mat-toolbar>

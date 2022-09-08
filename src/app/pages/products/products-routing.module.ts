@@ -1,17 +1,20 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { ProductsInfoComponent } from './products-info/products-info.component';
+import { ProductsComponent } from './products.component';
 
 const routes: Routes = [
   {
     path: '',
-    loadChildren: () =>
-      import('./products-landing/products-landing.module').then(
-        (m) => m.ProductsLandingModule
-      ),
+    component: ProductsComponent,
   },
   {
     path: 'products',
     redirectTo: '',
+  },
+  {
+    path: 'products/:id',
+    component: ProductsInfoComponent,
   },
 ];
 
