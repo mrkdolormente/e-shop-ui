@@ -3,7 +3,7 @@
         <h2>All Categories</h2>
         <mat-divider></mat-divider>
         <div *ngFor="let productCategory of productCategories">
-            <a class="es-py-2 es-block es-cursor-pointer hover:es-font-bold">{{ productCategory.name }}</a>
+            <button mat-button class="es-w-full category-button">{{ productCategory.name }}</button>
         </div>
     </div>
     <div class="md:es-w-4/5">
