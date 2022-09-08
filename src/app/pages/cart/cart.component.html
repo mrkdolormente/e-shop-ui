@@ -30,11 +30,11 @@
                 </div>
                 <div class="es-w-32 es-flex es-flex-col es-items-end">
                     <mat-form-field appearance="fill" class="es-w-full">
-                        <button mat-icon-button matPrefix>
+                        <button mat-icon-button matPrefix (click)="decreaseQuantity(cartItem.id)" [disabled]="cartItem.quantity === 1">
                             <mat-icon>remove</mat-icon>
                         </button>
-                        <input matInput type="number" [value]="cartItem.quantity || 0">
-                        <button mat-icon-button matSuffix>
+                        <input matInput type="number" [value]="cartItem.quantity" min="1">
+                        <button mat-icon-button matSuffix (click)="increaseQuantity(cartItem.id)">
                             <mat-icon>add</mat-icon>
                         </button>
                     </mat-form-field>
