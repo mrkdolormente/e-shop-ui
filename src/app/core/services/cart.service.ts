@@ -22,10 +22,26 @@ export class CartService {
   }
 
   /**
-   * @description Get cart item
+   * @description add item in cart
    * @returns
    */
-  addToCart(productId: number): Observable<iCart> {
+  addToCart(productId: string): Observable<iCart> {
     return this.http.post<iCart>(`${this.API_URL}/`, { productId });
+  }
+
+  /**
+   * @description delete item in cart
+   * @returns
+   */
+  deleteItemInCart(id: string): Observable<iCart> {
+    return this.http.delete<iCart>(`${this.API_URL}/${id}`);
+  }
+
+  /**
+   * @description delete item in cart
+   * @returns
+   */
+  deleteMultipleItemInCart(ids: string[]): Observable<iCart> {
+    return this.http.delete<iCart>(`${this.API_URL}`, { params: { ids } });
   }
 }

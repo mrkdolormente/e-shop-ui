@@ -2,7 +2,7 @@ import { iProductCategory } from './category.interface';
 import { iSeller } from './seller.interface';
 
 export interface iProduct {
-  _id: number;
+  _id: string;
   name: string;
   price: number;
   brand: string;

@@ -1,5 +1,5 @@
 export interface iSeller {
-  _id: number;
+  _id: string;
   name: string;
   img?: string;
 }

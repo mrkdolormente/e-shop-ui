@@ -1,7 +1,7 @@
 import { iProduct } from './product.interface';
 
 export interface iCart {
-  id: number;
+  _id: string;
   product: iProduct;
   quantity: number;
 

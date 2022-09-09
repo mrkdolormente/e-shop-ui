@@ -14,7 +14,9 @@
           class="es-w-1/6 es-uppercase"
           >Select All ({{ cartItems.length || 0 }} Item(s))</mat-checkbox
         >
-        <button mat-button class="es-uppercase"><mat-icon>delete_outline</mat-icon> Delete</button>
+        <button mat-button class="es-uppercase" (click)="deleteSelectedItems()">
+          <mat-icon>delete_outline</mat-icon> Delete
+        </button>
       </div>
       <div
         *ngFor="let cartItem of cartItems"
@@ -26,15 +28,17 @@
             (ngModelChange)="updateAllChecked()"
             class="es-w-8"
           ></mat-checkbox>
-          <img
-            class="es-w-32 es-h-32 es-object-contain"
-            [src]="cartItem.product.img"
-            [alt]="cartItem.product.name"
-          />
-          <div class="es-pl-4">
-            <div class="es-text-lg">{{ cartItem.product.name }}</div>
-            <div class="es-text-sm">{{ cartItem.product.brand }}</div>
-          </div>
+          <a class="es-inline-flex" [routerLink]="['/products', cartItem.product._id]">
+            <img
+              class="es-w-32 es-h-32 es-object-contain"
+              [src]="cartItem.product.img"
+              [alt]="cartItem.product.name"
+            />
+            <div class="es-pl-4">
+              <div class="es-text-lg">{{ cartItem.product.name }}</div>
+              <div class="es-text-sm">{{ cartItem.product.brand }}</div>
+            </div>
+          </a>
         </div>
         <div class="es-text-purple-800 es-text-xl">
           ₱{{ cartItem.product.price | number: '.2' }}
@@ -44,18 +48,18 @@
             <button
               mat-icon-button
               matPrefix
-              (click)="decreaseQuantity(cartItem.id)"
+              (click)="decreaseQuantity(cartItem._id)"
               [disabled]="cartItem.quantity === 1"
             >
               <mat-icon>remove</mat-icon>
             </button>
             <input matInput type="number" [value]="cartItem.quantity" min="1" />
-            <button mat-icon-button matSuffix (click)="increaseQuantity(cartItem.id)">
+            <button mat-icon-button matSuffix (click)="increaseQuantity(cartItem._id)">
               <mat-icon>add</mat-icon>
             </button>
           </mat-form-field>
 
-          <button mat-icon-button>
+          <button mat-icon-button (click)="deleteItemInCart(cartItem._id)">
             <mat-icon>delete_outline</mat-icon>
           </button>
         </div>
