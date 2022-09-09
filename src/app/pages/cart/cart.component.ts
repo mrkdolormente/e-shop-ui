@@ -1,62 +1,34 @@
-import { Component, OnInit } from '@angular/core';
-import { iCart } from 'src/app/core/interfaces/cart';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { iCart } from 'src/app/core/interfaces/cart.interface';
+import { CartService } from 'src/app/core/services/cart.service';
+import { Subject, takeUntil } from 'rxjs';
+import { SnackbarService } from 'src/app/core/services/snackbar.service';
 
 @Component({
   selector: 'app-cart',
   templateUrl: './cart.component.html',
   styleUrls: ['./cart.component.scss'],
 })
-export class CartComponent implements OnInit {
-  cartItems: iCart[] = [
-    {
-      id: 1,
-      product: {
-        id: 1,
-        name: 'Samsung Galaxy M12 (4+64GB)',
-        price: 7490,
-        img: 'https://cf.shopee.ph/file/10140e5683c2cc309d66f6f1728fb2e6',
-        brand: 'Samsung',
-        description:
-          '6.5" HD+ TFT • Exynos 850 • 4GB RAM + 64GB Internal • 48MP Main + 5MP Ultra Wide + 2MP Macro + 2MP Depth • 8MP Front Camera • 5,000mAh with 15W Fast Charging • One UI Core • Samsung Knox • Dolby Atmos • Dual SIM',
-        category: {
-          id: 6,
-          name: 'Laptops & Computers',
-        },
-        seller: {
-          id: 1,
-          name: 'Samsung Official Store',
-        },
-      },
-      quantity: 1,
-    },
-    {
-      id: 2,
-      product: {
-        id: 1,
-        name: 'Samsung Galaxy M12 (4+64GB)',
-        price: 7490,
-        img: 'https://cf.shopee.ph/file/10140e5683c2cc309d66f6f1728fb2e6',
-        brand: 'Samsung',
-        description:
-          '6.5" HD+ TFT • Exynos 850 • 4GB RAM + 64GB Internal • 48MP Main + 5MP Ultra Wide + 2MP Macro + 2MP Depth • 8MP Front Camera • 5,000mAh with 15W Fast Charging • One UI Core • Samsung Knox • Dolby Atmos • Dual SIM',
-        category: {
-          id: 6,
-          name: 'Laptops & Computers',
-        },
-        seller: {
-          id: 1,
-          name: 'Samsung Official Store',
-        },
-      },
-      quantity: 1,
-    },
-  ];
+export class CartComponent implements OnInit, OnDestroy {
+  cartItems: iCart[] = [];
 
   allChecked: boolean = false;
 
-  constructor() {}
+  private readonly destroy$ = new Subject();
 
-  ngOnInit(): void {}
+  constructor(
+    private cartService: CartService,
+    private readonly snackbarService: SnackbarService
+  ) {}
+
+  ngOnInit(): void {
+    this.loadCartItems();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
+  }
 
   get someChecked(): boolean {
     return this.checkedCount > 0 && !this.allChecked;
@@ -81,6 +53,15 @@ export class CartComponent implements OnInit {
     return this.subTotal + this.shippingFee;
   }
 
+  loadCartItems(): void {
+    this.cartService
+      .getCartItemList()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((cartItemList) => {
+        this.cartItems = cartItemList;
+      });
+  }
+
   updateAllChecked() {
     this.allChecked = this.cartItems != null && this.cartItems.every((t) => t.isChecked);
   }
@@ -91,21 +72,44 @@ export class CartComponent implements OnInit {
     this.cartItems.forEach((t) => (t.isChecked = isChecked));
   }
 
-  increaseQuantity(id: number) {
+  increaseQuantity(id: string) {
     this.cartItems = this.cartItems.map((cartItem) => {
       return {
         ...cartItem,
-        quantity: cartItem.id == id ? (cartItem.quantity += 1) : cartItem.quantity,
+        quantity: cartItem._id == id ? (cartItem.quantity += 1) : cartItem.quantity,
       };
     });
   }
 
-  decreaseQuantity(id: number) {
+  decreaseQuantity(id: string) {
     this.cartItems = this.cartItems.map((cartItem) => {
       return {
         ...cartItem,
-        quantity: cartItem.id == id ? (cartItem.quantity -= 1) : cartItem.quantity,
+        quantity: cartItem._id == id ? (cartItem.quantity -= 1) : cartItem.quantity,
       };
     });
+  }
+
+  deleteItemInCart(id: string) {
+    this.cartService
+      .deleteItemInCart(id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((res) => {
+        this.loadCartItems();
+        this.snackbarService.openSnackBar('Item is successfully removed!');
+      });
+  }
+
+  deleteSelectedItems() {
+    const ids = this.cartItems.filter((item) => item.isChecked).map((item) => item._id);
+
+    this.cartService
+      .deleteMultipleItemInCart(ids)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((res) => {
+        this.loadCartItems();
+
+        this.snackbarService.openSnackBar(`${ids.length} Item(s) are successfully removed!`);
+      });
   }
 }

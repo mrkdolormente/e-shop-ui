@@ -1,43 +1,77 @@
-import { Component, OnInit } from '@angular/core';
-import { iProduct } from 'src/app/core/interfaces/product';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { ActivatedRoute, Router } from '@angular/router';
+import { first, Subject, takeUntil } from 'rxjs';
+import { iProduct } from 'src/app/core/interfaces/product.interface';
+import { AuthService } from 'src/app/core/services/auth.service';
 import { CartService } from 'src/app/core/services/cart.service';
+import { ProductService } from 'src/app/core/services/product.service';
 import { SnackbarService } from 'src/app/core/services/snackbar.service';
+import { LoginDialogComponent } from 'src/app/shared/dialog/login-dialog/login-dialog.component';
 
 @Component({
   selector: 'app-products-info',
   templateUrl: './products-info.component.html',
   styleUrls: ['./products-info.component.scss'],
 })
-export class ProductsInfoComponent implements OnInit {
-  productInfo: iProduct = {
-    id: 1,
-    name: 'Samsung Galaxy M12 (4+64GB)',
-    price: 7490,
-    img: 'https://cf.shopee.ph/file/10140e5683c2cc309d66f6f1728fb2e6',
-    brand: 'Samsung',
-    description:
-      '6.5" HD+ TFT • Exynos 850 • 4GB RAM + 64GB Internal • 48MP Main + 5MP Ultra Wide + 2MP Macro + 2MP Depth • 8MP Front Camera • 5,000mAh with 15W Fast Charging • One UI Core • Samsung Knox • Dolby Atmos • Dual SIM',
-    category: {
-      id: 6,
-      name: 'Laptops & Computers',
-    },
-    seller: {
-      id: 1,
-      name: 'Samsung Official Store',
-    },
-  };
+export class ProductsInfoComponent implements OnInit, OnDestroy {
+  productId: string;
+  productInfo: iProduct;
+
+  private readonly destroy$ = new Subject();
 
   constructor(
+    private readonly authService: AuthService,
     private cartService: CartService,
-    private snackbarService: SnackbarService
+    private readonly dialog: MatDialog,
+    private readonly productService: ProductService,
+    private readonly route: ActivatedRoute,
+    private readonly router: Router,
+    private readonly snackbarService: SnackbarService
   ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.route.params.pipe(takeUntil(this.destroy$)).subscribe((params) => {
+      this.productId = params['id'];
+
+      this.getProductInfo();
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
+  }
 
   addToCart() {
-    this.cartService.itemCount++;
-    this.snackbarService.openSnackBar(
-      `${this.productInfo.name} is successfully added to cart!`
-    );
+    this.authService.isLoggedIn.pipe(first()).subscribe((isLoggedIn) => {
+      if (isLoggedIn) {
+        this.cartService
+          .addToCart(this.productInfo._id)
+          .pipe(takeUntil(this.destroy$))
+          .subscribe((res) => {
+            this.cartService.itemCount++;
+            this.snackbarService.openSnackBar(
+              `${this.productInfo.name} is successfully added to cart!`
+            );
+          });
+      } else {
+        this.dialog.open(LoginDialogComponent);
+      }
+    });
+  }
+
+  getProductInfo() {
+    this.productService
+      .getProductInfo(this.productId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(
+        (productInfo: iProduct) => {
+          this.productInfo = productInfo;
+        },
+        () => {
+          this.router.navigate(['/products']);
+        }
+      );
   }
 }

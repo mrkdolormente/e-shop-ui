@@ -8,6 +8,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [CartComponent],
-  imports: [CommonModule, CartRoutingModule, FormsModule, ReactiveFormsModule, SharedModule],
+  imports: [CommonModule, CartRoutingModule, SharedModule],
 })
 export class CartModule {}
