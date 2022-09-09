@@ -1,42 +1,35 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { iCart } from 'src/app/core/interfaces/cart.interface';
+import { CartService } from 'src/app/core/services/cart.service';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-cart',
   templateUrl: './cart.component.html',
   styleUrls: ['./cart.component.scss'],
 })
-export class CartComponent implements OnInit {
-  cartItems: iCart[] = [
-    {
-      id: 1,
-      product: {
-        _id: 1,
-        name: 'Samsung Galaxy M12 (4+64GB)',
-        price: 7490,
-        img: 'https://cf.shopee.ph/file/10140e5683c2cc309d66f6f1728fb2e6',
-        brand: 'Samsung',
-        description:
-          '6.5" HD+ TFT • Exynos 850 • 4GB RAM + 64GB Internal • 48MP Main + 5MP Ultra Wide + 2MP Macro + 2MP Depth • 8MP Front Camera • 5,000mAh with 15W Fast Charging • One UI Core • Samsung Knox • Dolby Atmos • Dual SIM',
-        category: {
-          _id: 6,
-          name: 'Laptops & Computers',
-        },
-
-        seller: {
-          _id: 1,
-          name: 'Samsung Official Store',
-        },
-      },
-      quantity: 1,
-    },
-  ];
+export class CartComponent implements OnInit, OnDestroy {
+  cartItems: iCart[] = [];
 
   allChecked: boolean = false;
 
-  constructor() {}
+  private readonly destroy$ = new Subject();
 
-  ngOnInit(): void {}
+  constructor(private cartService: CartService) {}
+
+  ngOnInit(): void {
+    this.cartService
+      .getCartItemList()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((cartItemList) => {
+        this.cartItems = cartItemList;
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
+  }
 
   get someChecked(): boolean {
     return this.checkedCount > 0 && !this.allChecked;

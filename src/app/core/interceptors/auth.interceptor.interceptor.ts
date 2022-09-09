@@ -31,7 +31,7 @@ export class AuthInterceptorInterceptor implements HttpInterceptor {
       catchError((error: HttpErrorResponse) => {
         // Check if error status is 403 or 401
         // Applicable only for non-thirdparty API
-        if (error.status === 403 || error.status === 401) {
+        if (error.status === 403) {
           this.authService.removeAuthToken();
           this.router.navigate(['/']);
         }
