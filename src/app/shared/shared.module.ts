@@ -16,19 +16,29 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 
 import { RouterModule } from '@angular/router';
 import { SnackbarComponent } from './snackbar/snackbar.component';
+import { LoginDialogComponent } from './dialog/login-dialog/login-dialog.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
-  declarations: [ToolbarComponent, SnackbarComponent],
+  declarations: [ToolbarComponent, SnackbarComponent, LoginDialogComponent],
   imports: [
     CommonModule,
+    FormsModule,
     MatBadgeModule,
     MatButtonModule,
+    MatCardModule,
+    MatDialogModule,
+    MatFormFieldModule,
     MatIconModule,
+    MatInputModule,
     MatSnackBarModule,
     MatToolbarModule,
+    ReactiveFormsModule,
     RouterModule,
   ],
   exports: [
+    FormsModule,
     MatButtonModule,
     MatCardModule,
     MatCheckboxModule,
@@ -38,6 +48,7 @@ import { SnackbarComponent } from './snackbar/snackbar.component';
     MatInputModule,
     MatSelectModule,
     MatSnackBarModule,
+    ReactiveFormsModule,
     ToolbarComponent,
   ],
 })

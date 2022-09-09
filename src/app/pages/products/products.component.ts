@@ -1,39 +1,36 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Subject, takeUntil } from 'rxjs';
 import { ProductCategories } from 'src/app/core/constants/product-category';
-import { iProductCategory } from 'src/app/core/interfaces/category';
-import { iProduct } from 'src/app/core/interfaces/product';
+import { iProductCategory } from 'src/app/core/interfaces/category.interface';
+import { iProduct } from 'src/app/core/interfaces/product.interface';
+import { ProductService } from 'src/app/core/services/product.service';
 
 @Component({
   selector: 'app-products',
   templateUrl: './products.component.html',
   styleUrls: ['./products.component.scss'],
 })
-export class ProductsComponent implements OnInit {
+export class ProductsComponent implements OnInit, OnDestroy {
   productCategories: iProductCategory[] = ProductCategories;
-  products: iProduct[] = [
-    {
-      id: 1,
-      name: 'Samsung Galaxy M12 (4+64GB)',
-      price: 7490,
-      img: 'https://cf.shopee.ph/file/10140e5683c2cc309d66f6f1728fb2e6',
-      brand: 'Samsung',
-      description:
-        '6.5" HD+ TFT • Exynos 850 • 4GB RAM + 64GB Internal • 48MP Main + 5MP Ultra Wide + 2MP Macro + 2MP Depth • 8MP Front Camera • 5,000mAh with 15W Fast Charging • One UI Core • Samsung Knox • Dolby Atmos • Dual SIM',
-      category: {
-        id: 6,
-        name: 'Laptops & Computers',
-      },
-      seller: {
-        id: 1,
-        name: 'Samsung Official Store',
-      },
-    },
-  ];
-  constructor() {}
+  products: iProduct[];
+
+  private readonly destroy$ = new Subject();
+
+  constructor(private readonly productService: ProductService) {}
 
   ngOnInit(): void {
-    this.productCategories = this.productCategories.sort((a, b) =>
-      a.name.localeCompare(b.name)
-    );
+    this.productService
+      .getProductList()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((productList) => {
+        this.products = productList;
+      });
+
+    this.productCategories = this.productCategories.sort((a, b) => a.name.localeCompare(b.name));
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 }

@@ -1,8 +1,8 @@
-import { iProductCategory } from './category';
-import { iSeller } from './seller';
+import { iProductCategory } from './category.interface';
+import { iSeller } from './seller.interface';
 
 export interface iProduct {
-  id: number;
+  _id: number;
   name: string;
   price: number;
   brand: string;
