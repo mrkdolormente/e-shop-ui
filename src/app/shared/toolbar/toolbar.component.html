@@ -1,0 +1,41 @@
+<mat-toolbar color="primary">
+  <button
+    mat-icon-button
+    class="example-icon"
+    aria-label="Example icon-button with menu icon"
+    routerLink="/"
+  >
+    <mat-icon>shopping_basket</mat-icon>
+  </button>
+  <span>E-Shop</span>
+  <span class="es-flex-auto"></span>
+  <button
+    mat-icon-button
+    aria-label="Example icon-button with heart icon"
+    (click)="openLoginDialog()"
+  >
+    <mat-icon [matBadge]="cartService.itemCount" matBadgePosition="after" matBadgeColor="accent"
+      >shopping_cart</mat-icon
+    >
+  </button>
+  <ng-container *ngIf="authService.isLoggedIn | async; else logoutBtn">
+    <button
+      mat-icon-button
+      class="example-icon"
+      aria-label="icon-button with exit_to_app icon"
+      (click)="logout()"
+    >
+      <mat-icon>exit_to_app</mat-icon>
+    </button>
+  </ng-container>
+  <ng-template #logoutBtn>
+    <button
+      mat-icon-button
+      class="example-icon"
+      aria-label="icon-button with account_circle icon"
+      (click)="openLoginDialog()"
+    >
+      <mat-icon>account_circle</mat-icon>
+    </button>
+  </ng-template>
+</mat-toolbar>
