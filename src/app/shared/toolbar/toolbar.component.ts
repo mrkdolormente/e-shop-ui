@@ -21,7 +21,18 @@ export class ToolbarComponent implements OnInit {
     private readonly router: Router
   ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.authService.isLoggedIn.pipe(first()).subscribe((isLoggedIn) => {
+      if (isLoggedIn) {
+        this.cartService
+          .getCartItemList()
+          .pipe(takeUntil(this.destroy$))
+          .subscribe((cartItemList) => {
+            this.cartService.itemCount = cartItemList.length || 0;
+          });
+      }
+    });
+  }
 
   ngOnDestroy(): void {
     this.destroy$.next(true);

@@ -1,5 +1,5 @@
 <section class="es-flex es-flex-col md:es-flex-row es-gap-2 es-py-4 es-px-6">
-  <div class="md:es-w-1/5">
+  <div class="md:es-w-1/5 es-hidden md:es-block">
     <button mat-button class="es-w-full category-button" (click)="loadProducts()">
       All Categories
     </button>
@@ -13,6 +13,29 @@
         {{ productCategory.name }}
       </button>
     </ng-container>
+  </div>
+  <div class="md:es-hidden">
+    <mat-accordion>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title> Categories </mat-panel-title>
+          <mat-panel-description> </mat-panel-description>
+        </mat-expansion-panel-header>
+        <button mat-button class="es-w-full category-button" (click)="loadProducts()">
+          All Categories
+        </button>
+        <mat-divider></mat-divider>
+        <ng-container *ngFor="let productCategory of productCategories">
+          <button
+            mat-button
+            class="es-w-full category-button"
+            (click)="loadProducts({ categoryId: productCategory._id })"
+          >
+            {{ productCategory.name }}
+          </button>
+        </ng-container>
+      </mat-expansion-panel>
+    </mat-accordion>
   </div>
   <div class="md:es-w-4/5">
     <div class="es-inline-flex es-w-full md:es-px-2">
@@ -29,7 +52,7 @@
       <div class="es-w-1/4">
         <mat-form-field appearance="fill" class="es-w-full">
           <mat-label>Sort By</mat-label>
-          <mat-select>
+          <mat-select (selectionChange)="onSortChange($event)">
             <mat-option value="0">Price low to high</mat-option>
             <mat-option value="1">Price high to low</mat-option>
           </mat-select>

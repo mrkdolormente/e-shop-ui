@@ -68,4 +68,14 @@ export class ProductsComponent implements OnInit, OnDestroy {
         });
     }, 2000);
   }
+
+  onSortChange(event: any) {
+    const isLowToHigh = event.value == 0;
+
+    if (isLowToHigh) {
+      this.products = this.products.sort((a, b) => a.price - b.price);
+    } else {
+      this.products = this.products.sort((a, b) => b.price - a.price);
+    }
+  }
 }
