@@ -13,6 +13,7 @@ export class CartComponent implements OnInit, OnDestroy {
   cartItems: iCart[] = [];
 
   allChecked: boolean = false;
+  quantityTimeout: any;
 
   private readonly destroy$ = new Subject();
 
@@ -59,6 +60,7 @@ export class CartComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe((cartItemList) => {
         this.cartItems = cartItemList;
+        this.cartService.itemCount = this.cartItems.length;
       });
   }
 
@@ -72,22 +74,16 @@ export class CartComponent implements OnInit, OnDestroy {
     this.cartItems.forEach((t) => (t.isChecked = isChecked));
   }
 
-  increaseQuantity(id: string) {
+  changeQuantity(id: string, quantity: number, isIncreased: boolean) {
+    const newQuantity = isIncreased ? (quantity += 1) : (quantity -= 1);
     this.cartItems = this.cartItems.map((cartItem) => {
       return {
         ...cartItem,
-        quantity: cartItem._id == id ? (cartItem.quantity += 1) : cartItem.quantity,
+        quantity: cartItem._id == id ? newQuantity : cartItem.quantity,
       };
     });
-  }
 
-  decreaseQuantity(id: string) {
-    this.cartItems = this.cartItems.map((cartItem) => {
-      return {
-        ...cartItem,
-        quantity: cartItem._id == id ? (cartItem.quantity -= 1) : cartItem.quantity,
-      };
-    });
+    this.updateItemInCart(id, newQuantity);
   }
 
   deleteItemInCart(id: string) {
@@ -111,5 +107,22 @@ export class CartComponent implements OnInit, OnDestroy {
 
         this.snackbarService.openSnackBar(`${ids.length} Item(s) are successfully removed!`);
       });
+  }
+
+  updateItemInCart(id: string, quantity: number) {
+    clearTimeout(this.quantityTimeout);
+
+    this.quantityTimeout = setTimeout(() => {
+      this.cartService
+        .updateItemInCart(id, { quantity })
+        .pipe(takeUntil(this.destroy$))
+        .subscribe();
+    }, 1000);
+  }
+
+  onQuantityChange(event: any, id: string) {
+    const quantity = event.target?.value || 1;
+
+    this.updateItemInCart(id, quantity);
   }
 }

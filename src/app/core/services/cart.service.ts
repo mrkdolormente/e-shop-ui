@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { iCart } from '../interfaces/cart.interface';
+import { iCart, iCartUpsert } from '../interfaces/cart.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -25,23 +25,31 @@ export class CartService {
    * @description add item in cart
    * @returns
    */
-  addToCart(productId: string): Observable<iCart> {
-    return this.http.post<iCart>(`${this.API_URL}/`, { productId });
+  addToCart(productId: string): Observable<iCartUpsert> {
+    return this.http.post<iCartUpsert>(`${this.API_URL}/`, { productId });
   }
 
   /**
    * @description delete item in cart
    * @returns
    */
-  deleteItemInCart(id: string): Observable<iCart> {
-    return this.http.delete<iCart>(`${this.API_URL}/${id}`);
+  deleteItemInCart(id: string): Observable<iCart[]> {
+    return this.http.delete<iCart[]>(`${this.API_URL}/${id}`);
   }
 
   /**
    * @description delete item in cart
    * @returns
    */
-  deleteMultipleItemInCart(ids: string[]): Observable<iCart> {
-    return this.http.delete<iCart>(`${this.API_URL}`, { params: { ids } });
+  deleteMultipleItemInCart(ids: string[]): Observable<iCart[]> {
+    return this.http.delete<iCart[]>(`${this.API_URL}`, { params: { ids } });
+  }
+
+  /**
+   * @description add item in cart
+   * @returns
+   */
+  updateItemInCart(id: string, params: { quantity: number }): Observable<iCartUpsert> {
+    return this.http.put<iCartUpsert>(`${this.API_URL}/${id}`, params);
   }
 }

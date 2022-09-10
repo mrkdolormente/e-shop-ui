@@ -50,7 +50,9 @@ export class ProductsInfoComponent implements OnInit, OnDestroy {
           .addToCart(this.productInfo._id)
           .pipe(takeUntil(this.destroy$))
           .subscribe((res) => {
-            this.cartService.itemCount++;
+            if (res.insertedId) {
+              this.cartService.itemCount++;
+            }
             this.snackbarService.openSnackBar(
               `${this.productInfo.name} is successfully added to cart!`
             );

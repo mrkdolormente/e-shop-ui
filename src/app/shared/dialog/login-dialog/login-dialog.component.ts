@@ -3,6 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Subject, takeUntil, finalize } from 'rxjs';
 import { AuthService } from 'src/app/core/services/auth.service';
+import { CartService } from 'src/app/core/services/cart.service';
 
 @Component({
   selector: 'app-login-dialog',
@@ -39,6 +40,7 @@ export class LoginDialogComponent implements OnDestroy {
 
   constructor(
     private readonly authService: AuthService,
+    private readonly cartService: CartService,
     private readonly dialogRef: MatDialogRef<LoginDialogComponent>
   ) {}
 
@@ -77,15 +79,27 @@ export class LoginDialogComponent implements OnDestroy {
         .subscribe({
           next: (tokenData) => {
             // Close dialog upon success request
-            this.dialogRef.close();
+            this.dialogRef.close(true);
 
             // Save auth token
             this.authService.saveAuthToken(tokenData.token);
+
+            // Load Cart Count
+            this.loadCartItemList();
           },
           error: (err) => {
             this.isInvalidCredentials = true;
           },
         });
     }
+  }
+
+  loadCartItemList() {
+    this.cartService
+      .getCartItemList()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((cartItemList) => {
+        this.cartService.itemCount = cartItemList.length || 0;
+      });
   }
 }

@@ -18,6 +18,9 @@
           <mat-icon>delete_outline</mat-icon> Delete
         </button>
       </div>
+      <ng-container *ngIf="cartItems?.length === 0">
+        <div class="es-h-full es-text-base es-p-4 es-text-gray-400">No Item(s) in Cart</div>
+      </ng-container>
       <div
         *ngFor="let cartItem of cartItems"
         class="es-p-2 es-flex es-justify-between es-items-center es-mt-4 es-border es-border-gray-100 es-relative"
@@ -48,13 +51,23 @@
             <button
               mat-icon-button
               matPrefix
-              (click)="decreaseQuantity(cartItem._id)"
+              (click)="changeQuantity(cartItem._id, cartItem.quantity, false)"
               [disabled]="cartItem.quantity === 1"
             >
               <mat-icon>remove</mat-icon>
             </button>
-            <input matInput type="number" [value]="cartItem.quantity" min="1" />
-            <button mat-icon-button matSuffix (click)="increaseQuantity(cartItem._id)">
+            <input
+              matInput
+              type="number"
+              [(ngModel)]="cartItem.quantity"
+              (ngModelChange)="onQuantityChange($event, cartItem._id)"
+              min="1"
+            />
+            <button
+              mat-icon-button
+              matSuffix
+              (click)="changeQuantity(cartItem._id, cartItem.quantity, true)"
+            >
               <mat-icon>add</mat-icon>
             </button>
           </mat-form-field>

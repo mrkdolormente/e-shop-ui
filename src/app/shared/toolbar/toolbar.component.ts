@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { AuthService } from 'src/app/core/services/auth.service';
 import { CartService } from 'src/app/core/services/cart.service';
 import { LoginDialogComponent } from '../dialog/login-dialog/login-dialog.component';
-import { first, Subject, takeUntil } from 'rxjs';
+import { first, takeWhile, Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-toolbar',
@@ -50,5 +50,15 @@ export class ToolbarComponent implements OnInit {
         this.dialog.open(LoginDialogComponent);
       }
     });
+  }
+
+  /**
+   * @description Logout current user
+   */
+  logout(): void {
+    this.authService.removeAuthToken();
+    this.router.navigate(['/']);
+
+    this.cartService.itemCount = 0;
   }
 }
