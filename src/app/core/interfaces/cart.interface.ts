@@ -7,3 +7,11 @@ export interface iCart {
 
   isChecked?: boolean;
 }
+
+export interface iCartUpsert {
+  acknowledged: boolean;
+  insertedId?: string;
+  matchedCount?: number;
+  modifiedCount?: number;
+  upsertedCount?: number;
+}

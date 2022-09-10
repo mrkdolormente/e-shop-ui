@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { AuthService } from 'src/app/core/services/auth.service';
 import { CartService } from 'src/app/core/services/cart.service';
 import { LoginDialogComponent } from '../dialog/login-dialog/login-dialog.component';
-import { first, Subject, takeUntil } from 'rxjs';
+import { first, takeWhile, Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-toolbar',
@@ -21,18 +21,7 @@ export class ToolbarComponent implements OnInit {
     private readonly router: Router
   ) {}
 
-  ngOnInit(): void {
-    this.authService.isLoggedIn.pipe(first()).subscribe((isLoggedIn) => {
-      if (isLoggedIn) {
-        this.cartService
-          .getCartItemList()
-          .pipe(takeUntil(this.destroy$))
-          .subscribe((cartItemList) => {
-            this.cartService.itemCount = cartItemList.length || 0;
-          });
-      }
-    });
-  }
+  ngOnInit(): void {}
 
   ngOnDestroy(): void {
     this.destroy$.next(true);
@@ -50,5 +39,15 @@ export class ToolbarComponent implements OnInit {
         this.dialog.open(LoginDialogComponent);
       }
     });
+  }
+
+  /**
+   * @description Logout current user
+   */
+  logout(): void {
+    this.authService.removeAuthToken();
+    this.router.navigate(['/']);
+
+    this.cartService.itemCount = 0;
   }
 }

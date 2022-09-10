@@ -1,8 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Subject, takeUntil } from 'rxjs';
-import { ProductCategories } from 'src/app/core/constants/product-category';
-import { iProductCategory } from 'src/app/core/interfaces/category.interface';
-import { iProduct } from 'src/app/core/interfaces/product.interface';
+import { finalize, Subject, takeUntil } from 'rxjs';
+import { iProduct, iProductCategory } from 'src/app/core/interfaces/product.interface';
 import { ProductService } from 'src/app/core/services/product.service';
 
 @Component({
@@ -11,26 +9,63 @@ import { ProductService } from 'src/app/core/services/product.service';
   styleUrls: ['./products.component.scss'],
 })
 export class ProductsComponent implements OnInit, OnDestroy {
-  productCategories: iProductCategory[] = ProductCategories;
+  productCategories: iProductCategory[];
   products: iProduct[];
+
+  textSearch: string = '';
+
+  searchTimeout: any = null;
+  isSearching: boolean = false;
 
   private readonly destroy$ = new Subject();
 
   constructor(private readonly productService: ProductService) {}
 
   ngOnInit(): void {
+    this.loadProducts();
+    this.loadProductCategoryList();
+  }
+
+  loadProducts(filters: { categoryId?: number } = {}) {
     this.productService
-      .getProductList()
+      .getProductList(filters)
       .pipe(takeUntil(this.destroy$))
-      .subscribe((productList) => {
+      .subscribe((productList: iProduct[]) => {
         this.products = productList;
       });
+  }
 
-    this.productCategories = this.productCategories.sort((a, b) => a.name.localeCompare(b.name));
+  loadProductCategoryList() {
+    this.productService
+      .getProductCategoryList()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((productCategoryList: iProductCategory[]) => {
+        this.productCategories = productCategoryList;
+      });
   }
 
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();
+  }
+
+  onSearch() {
+    this.isSearching = true;
+
+    clearTimeout(this.searchTimeout);
+
+    this.searchTimeout = setTimeout(() => {
+      this.productService
+        .getProductList({ q: this.textSearch })
+        .pipe(
+          takeUntil(this.destroy$),
+          finalize(() => {
+            this.isSearching = false;
+          })
+        )
+        .subscribe((productList: iProduct[]) => {
+          this.products = productList;
+        });
+    }, 2000);
   }
 }

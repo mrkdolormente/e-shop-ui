@@ -18,7 +18,24 @@
       >shopping_cart</mat-icon
     >
   </button>
-  <button mat-icon-button class="example-icon" aria-label="icon-button with share icon">
-    <mat-icon>account_circle</mat-icon>
-  </button>
+  <ng-container *ngIf="authService.isLoggedIn | async; else logoutBtn">
+    <button
+      mat-icon-button
+      class="example-icon"
+      aria-label="icon-button with exit_to_app icon"
+      (click)="logout()"
+    >
+      <mat-icon>exit_to_app</mat-icon>
+    </button>
+  </ng-container>
+  <ng-template #logoutBtn>
+    <button
+      mat-icon-button
+      class="example-icon"
+      aria-label="icon-button with account_circle icon"
+      (click)="openLoginDialog()"
+    >
+      <mat-icon>account_circle</mat-icon>
+    </button>
+  </ng-template>
 </mat-toolbar>

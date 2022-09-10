@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { iProduct } from '../interfaces/product.interface';
+import { iProduct, iProductCategory } from '../interfaces/product.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -14,10 +14,11 @@ export class ProductService {
 
   /**
    * @description Get all products
+   * @param queryParams query parameter for products GET endpoint
    * @returns
    */
-  getProductList(): Observable<iProduct[]> {
-    return this.http.get<iProduct[]>(this.API_URL);
+  getProductList(queryParams: { q?: string; categoryId?: number } = {}): Observable<iProduct[]> {
+    return this.http.get<iProduct[]>(this.API_URL, { params: queryParams });
   }
 
   /**
@@ -27,5 +28,13 @@ export class ProductService {
    */
   getProductInfo(id: string): Observable<iProduct> {
     return this.http.get<iProduct>(`${this.API_URL}/${id}`);
+  }
+
+  /**
+   * @description Get product category list from server
+   * @returns
+   */
+  getProductCategoryList(): Observable<iProductCategory[]> {
+    return this.http.get<iProductCategory[]>(`${this.API_URL}/categories`);
   }
 }

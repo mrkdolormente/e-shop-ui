@@ -1,4 +1,3 @@
-import { iProductCategory } from './category.interface';
 import { iSeller } from './seller.interface';
 
 export interface iProduct {
@@ -10,4 +9,9 @@ export interface iProduct {
   description: string;
   category: iProductCategory;
   seller: iSeller;
+}
+
+export interface iProductCategory {
+  _id: number;
+  name: string;
 }
