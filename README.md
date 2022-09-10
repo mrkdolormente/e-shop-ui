@@ -1,8 +1,10 @@
 # E-Shop
 
-This is an assessment project to showcase my skills in Angular. It is build and design in angular framework and utilities. Click here to know more about [Angular](https://angular.io/).
+This is an assessment project to showcase my skills in Angular, Node.js and MongoDB. It is build and design in angular framework as the client-side and node.js for the server-side. Click here to know more about [Angular](https://angular.io/) and [Node.js](https://nodejs.org/en/).
 
 ## Get Started
+
+The front-end service is running using Angular.
 
 ### Install Git
 
