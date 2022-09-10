@@ -1,0 +1,102 @@
+<section class="es-py-8 es-px-6">
+  <button mat-flat-button class="es-bg-gray-100" routerLink="/">
+    <mat-icon>keyboard_arrow_left</mat-icon> Go back to products
+  </button>
+  <div class="es-flex es-flex-col lg:es-flex-row es-items-start es-gap-2 es-pt-4">
+    <div class="es-w-full lg:es-w-3/4 es-order-2 lg:es-order-1">
+      <div
+        class="es-inline-flex es-w-full es-justify-between es-items-center es-bg-gray-100 es-p-2"
+      >
+        <mat-checkbox
+          [checked]="allChecked"
+          [indeterminate]="someChecked"
+          (change)="setAll($event.checked)"
+          class="es-w-1/6 es-uppercase"
+          >Select All ({{ cartItems.length || 0 }} Item(s))</mat-checkbox
+        >
+        <button mat-button class="es-uppercase" (click)="deleteSelectedItems()">
+          <mat-icon>delete_outline</mat-icon> Delete
+        </button>
+      </div>
+      <ng-container *ngIf="cartItems?.length === 0">
+        <div class="es-h-full es-text-base es-p-4 es-text-gray-400">No Item(s) in Cart</div>
+      </ng-container>
+      <div
+        *ngFor="let cartItem of cartItems"
+        class="es-p-2 es-flex es-justify-between es-items-center es-mt-4 es-border es-border-gray-100 es-relative"
+      >
+        <div class="es-inline-flex">
+          <mat-checkbox
+            [(ngModel)]="cartItem.isChecked"
+            (ngModelChange)="updateAllChecked()"
+            class="es-w-8"
+          ></mat-checkbox>
+          <a class="es-inline-flex" [routerLink]="['/products', cartItem.product._id]">
+            <img
+              class="es-w-32 es-h-32 es-object-contain"
+              [src]="cartItem.product.img"
+              [alt]="cartItem.product.name"
+            />
+            <div class="es-pl-4">
+              <div class="es-text-lg">{{ cartItem.product.name }}</div>
+              <div class="es-text-sm">{{ cartItem.product.brand }}</div>
+            </div>
+          </a>
+        </div>
+        <div class="es-text-purple-800 es-text-xl">
+          ₱{{ cartItem.product.price | number: '.2' }}
+        </div>
+        <div class="es-w-32 es-flex es-flex-col es-items-end">
+          <mat-form-field appearance="fill" class="es-w-full">
+            <button
+              mat-icon-button
+              matPrefix
+              (click)="changeQuantity(cartItem._id, cartItem.quantity, false)"
+              [disabled]="cartItem.quantity === 1"
+            >
+              <mat-icon>remove</mat-icon>
+            </button>
+            <input
+              matInput
+              type="number"
+              [(ngModel)]="cartItem.quantity"
+              (ngModelChange)="onQuantityChange($event, cartItem._id)"
+              min="1"
+            />
+            <button
+              mat-icon-button
+              matSuffix
+              (click)="changeQuantity(cartItem._id, cartItem.quantity, true)"
+            >
+              <mat-icon>add</mat-icon>
+            </button>
+          </mat-form-field>
+
+          <button mat-icon-button (click)="deleteItemInCart(cartItem._id)">
+            <mat-icon>delete_outline</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="es-w-full lg:es-w-1/4 es-order-1 lg:es-order-2 es-bg-gray-100 es-p-4">
+      <div class="es-text-xl es-pb-4">Order Summary</div>
+      <mat-divider></mat-divider>
+      <div class="es-text-base es-inline-flex es-justify-between es-py-2 es-w-full">
+        <div class="es-text-gray-400">Subtotal ({{ checkedCount }} items)</div>
+        <div class="es-font-medium">₱{{ subTotal | number: '.2' }}</div>
+      </div>
+      <div class="es-text-base es-inline-flex es-justify-between es-py-2 es-w-full">
+        <div class="es-text-gray-400">Shipping Fee</div>
+        <div class="es-font-medium">₱{{ shippingFee | number: '.2' }}</div>
+      </div>
+      <mat-divider></mat-divider>
+      <div class="es-inline-flex es-justify-between es-py-2 es-w-full">
+        <div class="es-text-base">Subtotal</div>
+        <div class="es-text-lg es-font-medium es-text-purple-800">₱{{ total | number: '.2' }}</div>
+      </div>
+      <button mat-raised-button color="primary" class="es-uppercase es-w-full">
+        Proceed to Checkout ({{ checkedCount }})
+      </button>
+    </div>
+  </div>
+</section>
